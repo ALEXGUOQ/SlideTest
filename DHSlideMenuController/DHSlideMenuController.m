@@ -22,7 +22,7 @@
 }
 
 @end
-
+static float canTouchAreaWidth = 40;
 @implementation DHSlideMenuController
 
 + (instancetype)sharedInstance {
@@ -155,7 +155,7 @@
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if (gestureRecognizer == panGestureRecognizer) {
         //控制是否从视图的边缘触发弹出侧边试图
-        if (_needPanFromViewBounds && [gestureRecognizer locationInView:currentView].x >= 40 && [gestureRecognizer locationInView:currentView].x < currentView.frame.size.width - 40) {
+        if (_needPanFromViewBounds && [gestureRecognizer locationInView:currentView].x >= canTouchAreaWidth && [gestureRecognizer locationInView:currentView].x < currentView.frame.size.width - canTouchAreaWidth) {
             return NO;
         }
         UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)gestureRecognizer;
@@ -314,6 +314,7 @@
         [currentView addSubview:coverButton];
         [self showShadow:_needShowBoundsShadow];
     }];
+    canTouchAreaWidth = currentView.frame.size.width - _leftViewShowWidth;
 }
 
 - (void)showRightViewController:(BOOL)animated {
@@ -331,9 +332,11 @@
         [currentView addSubview:coverButton];
         [self showShadow:_needShowBoundsShadow];
     }];
+    canTouchAreaWidth = currentView.frame.size.width - _rightViewShowWidth;
 }
 
 - (void)hideSlideMenuViewController:(BOOL)animated {
+    _needPanFromViewBounds = YES;
     [self showShadow:NO];
     NSTimeInterval animatedTime = 0;
     if (animated) {
@@ -347,6 +350,7 @@
         [_leftViewController.view removeFromSuperview];
         [_rightViewController.view removeFromSuperview];
     }];
+    canTouchAreaWidth = 40;
 }
 
 - (void)hideSideViewController {
